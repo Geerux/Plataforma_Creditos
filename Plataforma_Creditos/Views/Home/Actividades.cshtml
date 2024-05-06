@@ -1,0 +1,162 @@
+﻿
+
+@{
+    Layout = null;
+}
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barra de navegacion con Flex</title>
+    <link rel="stylesheet" href="~/Content/CSS/Style.css">
+    <link rel="stylesheet" href="~/Content/CSS/Style2.css">
+
+</head>
+
+<body>
+    <div class="Logo">
+        <img src="../source/photo3.png" alt="LogoUadeO" class="LogoImg">
+
+    </div>
+
+
+
+    
+
+    <form method="post" action="" enctype="multipart/form-data">
+        <h2 style="padding-left: 223px;">Agregar Nueva Actividad</h2>
+        <p>
+
+
+            <div class="botones">
+                <input type="submit" id="insertar" name="insertar" value="Agregar ">
+                <input type="submit" name="BtnBorrar" value="Borrar">
+                <input type="submit" name="BtnBuscar" value="Buscar">
+            </div>
+
+        <p>
+
+
+
+            <label>Folio</label>
+            <input type="text" id="folio" name="folio" maxlength="20" size="5" value=""
+
+            <!-- <label for="name">Matricula</label>
+            <input type="text" id="Matricula" name="Matricula" placeholder="Nombre de la actividad"> -->
+
+            <label>Actividad</label>
+            <input type="text" id="Actividad" name="Actividad" placeholder="Nombre de la actividad" value=<?php echo $re_descripcion; ?>>
+        <p>
+
+            <label>Horas</label>
+            <input type="hora" id="horas" name="horas" size="5" value=""
+
+            <label>Tipo de credito</label>
+         
+          
+
+          
+            <br>
+
+        <p>
+
+            <label for="Fecha">Fecha de Registro</label>
+            <input type="date" id="Fecha" name="Fecha" placeholder="Fecha de registro" value= ""
+
+        <P>
+        <p>
+
+            <!-- <label>Evidencia</label>
+            <input type="text" id="Evidencia" name="Evidencia" placeholder="Evidencia" size = "50"> -->
+        <P>
+
+
+            <div class="botones">
+                <input type="button" id="Btn" name="Btn" value="Agregar">
+            </div>
+
+
+            <table id="datos" name="datos">
+                <thead>
+                    <tr>
+
+                        <th>Evidencia</th>
+                        <th>accion</th>
+
+                    </tr>
+                   
+                    <tr>
+                        <
+                        <td><img height="50px" src=""></td>
+
+                    </tr>
+                    <?php
+                    }}
+                    ?>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+
+    </form>
+ 
+    <script type="text/javascript">
+        //document.getElementById("folio").focus();
+        var boton = document.getElementById("Btn");
+        boton.addEventListener("click", agregarFila);
+        var cuenta = 0;
+        var guarda = 0;
+
+        function agregarFila() {
+            cuenta++;
+            var tabla = document.getElementById("datos");
+            //agregando la fila
+            var fila = tabla.insertRow();
+            // agregando la celdas a la fila
+            var celda1 = fila.insertCell(0);
+            var celda2 = fila.insertCell(1);
+            var celda3 = fila.insertCell(2);
+
+
+            fila.id = cuenta;
+
+            // cambiando la alineación de algunas celdas a la derecha
+            celda1.style.textAlign = "right";
+            celda2.style.textAlign = "right";
+            celda3.style.textAlign = "right";
+            // asginando valor a cada celda
+            celda1.innerHTML = '<input type="file" name="evidencia[]">';
+            celda2.innerHTML = '<input type="text" name="imagen" value="' + document.getElementById("folio").value + '" readonly size="5">';
+            celda3.innerHTML = '<input type="button" size="5" value="Quitar" onclick="eliminarRenglon(' + cuenta + ')">';
+            var guarda = document.getElementById("insertar");
+            guarda.disabled = false;
+        }
+        function eliminarRenglon(id) {
+            var tabla = document.getElementById("datos");
+            // Iterar sobre las filas de la tabla
+            for (var i = 0; i < tabla.rows.length; i++) {
+                // Comprobar si la fila tiene el ID buscado
+                if (tabla.rows[i].id == id) {
+                    // Obtener el índice de la fila que se desea eliminar
+                    var indice = tabla.rows[i].rowIndex;
+
+                    // Eliminar la fila utilizando el índice de la fila que se desea eliminar
+                    tabla.deleteRow(indice);
+
+                    break;
+                }
+
+            }
+            if (tabla.rows.length == 1) {
+                var guarda = document.getElementById("insertar");
+                guarda.disabled = true;
+            }
+        }
+    </script>
+</body>
+</html>

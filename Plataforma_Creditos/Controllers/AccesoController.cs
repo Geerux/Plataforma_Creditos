@@ -15,14 +15,14 @@ namespace Plataforma_Creditos.Controllers
     {
         // GET: Acceso
 
-        static string Cadena = "DataSourceNoseQueMasWeassssss;" + "Initial Catalog = NombreBaseDeDatos; ";
+        static string con = @"Data Source = GEERUX\SQLEXPRESS2014; Initial Catalog = Creditos; User = sa; Password = 21030203";
 
-        public ActionResult Login(Usuario Usuario)
-        {
-            //Usuario.Usr_Pass = 
+        public static string Key = "";
+        public static string Resultado = "";
+        public readonly Encoding Encoder = Encoding.UTF8;
+        // Acceso Login 
 
-            return View();
-        }
+       
 
         public ActionResult Registro()
         {
@@ -39,27 +39,87 @@ namespace Plataforma_Creditos.Controllers
         [HttpPost]
         public ActionResult Registrar()
         {
-            if (Usuario.Us_Contraseña == Usuario.Us_ConfirmarClave)
+            Usuario Alumno = new Usuario();
+            if (Alumno.Contraseña == Alumno.ConfirmarClave)
             {
                 // Aplicar metodo de encriptacion
-
+                return View();
             }
             else
             {
-                return ViewContext(); //Retornar vista de login
+                ModelState.AddModelError(string.Empty, "La contraseña no es la misma");
+                return View(); //Retornar vista de login
             }
 
-            
+
+            using (SqlConnection cn = new SqlConnection(con))
+            {
+
+                SqlCommand cmd = new SqlCommand("SP_RegistrarAlumno", cn);
+                cmd.Parameters.AddWithValue("Id", Alumno.Id);
+                cmd.Parameters.AddWithValue("Matricula", Alumno.Matricula);
+                cmd.Parameters.AddWithValue("Nombre",Alumno.Nombre);
+                cmd.Parameters.AddWithValue("ApellidoPaterno", Alumno.Apellido_Paterno);
+                cmd.Parameters.AddWithValue("ApellidoMaterno", Alumno.Apellido_Materno);
+
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cn.Open();
+
+                cmd.ExecuteNonQuery();
+
+                //Mostrar mensaje de que el usuario se registro con exito 
+
+            }
+
+            string Contraseña2 = "";
+            Contraseña2 = encriptar(Contraseña.Text);
+
+            SqlParameter[] parameters =
+            {
+                new SqlParameter("@Usuario", SqlDbType.VarChar) {Value = Usuario.Text},
+                new SqlParameter("@Contraseña", SqlDbType.VarChar) {Value = Contraseña2}
+            };
+            DA.EjecutaSP("Registrar", parameters);
+            MessageBox.Show("Datos guardados correctamente");
+
+            return View(); // Redirigir a Login
+
         }
 
+  
+        
+
+
+
+
         [HttpPost]
-        public ActionResult Login(Usuario usuario)
+        public ActionResult Login(Usuario Alumno)
         {
-            //Usuario.Us_Contraseña = //Llamar el metodo de encriptacion
-            //Aqui se pone el metodo para desencriptar
+           
+            using (SqlConnection cn = new SqlConnection(con))
+            {
+                SqlCommand cmd = new SqlCommand("SP_ValidarAlumno", cn);
+                cmd.Parameters.AddWithValue("Nombre", Alumno.Nombre);
+                cmd.Parameters.AddWithValue("Contraseña", Alumno.Contraseña);
+                cmd.CommandType = CommandType.StoredProcedure;
 
+                cn.Open();
 
+                Alumno.Id = Convert.ToInt32(cmd.ExecuteScalar().ToString());
 
+            }
+
+            if (Alumno.Id != 0)
+            {
+                Session["usuario"] = Alumno;
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                //Mensaje para indicar que el usuario no existe
+                return View();
+            }
         }
 
         public ActionResult Index()
@@ -137,6 +197,41 @@ namespace Plataforma_Creditos.Controllers
             {
                 return View();
             }
+        }
+
+
+
+
+        //// Metodos de encriptacion
+        ///Es el de Triple DES
+        static TripleDES CrearDES(string Key)
+        {
+            MD5 md5 = new MD5CryptoServiceProvider();
+            TripleDES des = new TripleDESCryptoServiceProvider();
+            var desKey = md5.ComputeHash(Encoding.UTF8.GetBytes(Key));
+            des.Key = desKey;
+            des.IV = new byte[des.BlockSize / 8];
+            des.Padding = PaddingMode.PKCS7;
+            des.Mode = CipherMode.ECB;
+            return des;
+        }
+
+        static string encriptar(string textoplano)
+        {
+            var des = CrearDES(Key);
+            var ct = des.CreateEncryptor();
+            var entrada = Encoding.UTF8.GetBytes(textoplano);
+            var salida = ct.TransformFinalBlock(entrada, 0, entrada.Length);
+            return Convert.ToBase64String(salida);
+        }
+
+        static string desencriptar(string textocifrado)
+        {
+            var des = CrearDES(Key);
+            var ct = des.CreateDecryptor();
+            var entrada = Convert.FromBase64String(textocifrado);
+            var salida = ct.TransformFinalBlock(entrada, 0, entrada.Length);
+            return Encoding.UTF8.GetString(salida);
         }
     }
 }

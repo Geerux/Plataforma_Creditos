@@ -15,7 +15,7 @@ namespace Plataforma_Creditos.Permisos
         {
             if (HttpContext.Current.Session["usuario"] == null)
             {
-                filterContext.Result = new RedirectResult("/Acceso/Login")
+                filterContext.Result = new RedirectResult("/Acceso/Login");
             }
         }
 

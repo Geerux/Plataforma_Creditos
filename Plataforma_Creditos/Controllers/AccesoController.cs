@@ -73,15 +73,14 @@ namespace Plataforma_Creditos.Controllers
             }
 
             string Contraseña2 = "";
-            Contraseña2 = encriptar(Contraseña.Text);
+            Contraseña2 = encriptar(Contraseña);
 
             SqlParameter[] parameters =
             {
-                new SqlParameter("@Usuario", SqlDbType.VarChar) {Value = Usuario.Text},
+                new SqlParameter("@Usuario", SqlDbType.VarChar) {Value = Usuario},
                 new SqlParameter("@Contraseña", SqlDbType.VarChar) {Value = Contraseña2}
             };
-            DA.EjecutaSP("Registrar", parameters);
-            MessageBox.Show("Datos guardados correctamente");
+            
 
             return View(); // Redirigir a Login
 

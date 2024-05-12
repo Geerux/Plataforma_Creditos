@@ -31,22 +31,6 @@ form {
 }
 
 
-
-.delete-button {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-right: 5px;
-    padding: 5px 10px;
-    text-align: center;
-    text-decoration: none;
-    display: flex;
-    width: 40px;
-    margin-top: 5px;
-}
-
 .edit-button {
     background-color: #4CAF50;
     color: white;
@@ -73,3 +57,21 @@ form {
     background-color: transparent;
     border: 0px transparent;
 }
+
+
+
+.delete-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 5px;
+    padding: 5px 10px;
+    text-align: center;
+    text-decoration: none;
+    display: flex;
+    width: 40px;
+    margin-top: 5px;
+}
+
